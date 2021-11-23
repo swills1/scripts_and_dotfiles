@@ -1,30 +1,22 @@
-import sendgrid
 import os
+import json
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
-sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
-data = {
-  "personalizations": [
-    {
-      "to": [
-        {
-          "email": "steven@swills.me"
-        }
-      ],
-      "subject": "Coded Message Bravo Zulu Foxtrot"
-    }
-  ],
-  "from": {
-    "email": "steven@swills.me"#,
-    #"name": "Manny"
-  },
-  "content": [
-    {
-      "type": "text/plain",
-      "value": "Cool kids ride a big wheel. This is a test of the emergency broadcast system."
-    }
-  ]
-}
-response = sg.client.mail.send.post(request_body=data)
-print(response.status_code)
-print(response.body)
-print(response.headers)
+to_emails = [
+    ('steven@swills.me')#,
+    #('')
+]
+message = Mail(
+    from_email=('alert@swills.me'),
+    to_emails=to_emails,
+    subject='Coded Message Bravo Zulu Foxtrot',
+    html_content='Cool kids ride big wheels. This is an automated emergency test.')
+try:
+    sendgrid_client = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+    response = sendgrid_client.send(message)
+    print(response.status_code)
+    print(response.body)
+    print(response.headers)
+except Exception as e:
+    print(e.message)
